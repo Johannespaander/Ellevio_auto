@@ -1,0 +1,32 @@
+import csv
+import pynetbox
+
+# Initialize the NetBox API client
+nb = pynetbox.api(
+    'http://localhost:8000',
+    token='5fc88bccf4a50a4c1de248a45bd96595dd883186'
+)
+
+def create_device(device_data):
+    # Create the device
+    device = nb.dcim.devices.create(device_data)
+    print(f"Device '{device.name}' created successfully.")
+
+# Open the CSV file
+with open('devices.csv', 'r') as csvfile:
+    # Create a CSV reader object
+    csvreader = csv.DictReader(csvfile)
+
+    # Iterate over each row in the CSV file
+    for row in csvreader:
+        # Define the device details from the CSV row
+        device_data = {
+            "name": row['Name'],
+            "device_type": int(row['Device Type ID']),
+            "role": int(row['Device Role ID']),
+            "site": int(row['Site ID']),
+            "status": "active",
+        }
+        
+        # Create the device
+        create_device(device_data)
